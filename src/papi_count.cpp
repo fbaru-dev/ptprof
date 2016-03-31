@@ -1,4 +1,4 @@
-#include "PapiCount.hpp"
+#include "papi_count.hpp"
 
 /*
  * http://icl.cs.utk.edu/projects/papi/wiki/PAPITopics:SandyFlops

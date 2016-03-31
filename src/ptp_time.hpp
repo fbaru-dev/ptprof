@@ -11,9 +11,9 @@
 #include <sstream>			//ostringstream
 #include <algorithm>			//count
 
-#include "CPUWTime.hpp"
-#include "CPUTick.hpp"
-#include "PapiCount.hpp"
+#include "cpu_time.hpp"
+#include "cpu_tick.hpp"
+#include "papi_count.hpp"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "PTime.hpp"
+#include "ptp_time.hpp"
 
 double PTime :: timelast = 0;
 int PTime :: _initialize = 0;
@@ -115,7 +115,7 @@ void PTime :: print_context_data()
 	{
 		if(!nametofind.compare(_funcsname[i])) break;	
 	}	
-        unsigned int n = i/2;
+//         unsigned int n = i/2;
 	for(k=j+1; k<i; ++k) { funcnameOutput[k].insert(0,"-"); } //Add some indent to identify the call stack in the
 	   							      // output print
   }

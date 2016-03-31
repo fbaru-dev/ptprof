@@ -9,7 +9,9 @@ ifeq ($(COMPILER),GCC)
 	CXXFLAGS+=-std=c++11 -fPIC
 	CC=gcc 
 	CFLAGS+=
+	LDFLAGS= -fPIC -shared
 endif
+
 ifeq ($(COMPILER),ICC)
 	CXX=icc
 	CXXFLAGS+=-std=c++11 -fPIC
@@ -39,39 +41,44 @@ endif
 
 
 #list of the files to be compiled
-SOURCES=PTime.cpp PapiCount.cpp example.cpp
+SOURCES=$(SRC_DIR)/ptp_time.cpp $(SRC_DIR)/papi_count.cpp
 
 ##########################################
 OBJS = $(SOURCES:.cpp=.o)
 ##########################################
+
+TARGET=lib build_dir install
+
+all: $(TARGET)
+#$(BUILD_DIR) $(LIBNAME) $(INSTALL) $(clean)
+
 %.o: %.cpp
+	$(info Compiling the object file: )
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
 	
-
-all: $(BUILD_DIR) $(LIBNAME) $(INSTALL) $(clean)
-			
 doc: 
 	doxygen
 
 distrib:
 	git archive --format=tar --prefix=ptplib-$(VER)/ $(VER) | gzip > ../ptplib-$(VER).tar.gz
 
-$(BUILD_DIR):
+build_dir:
 	mkdir -p $(INST_DIR) $(LIB_DIR) $(INCLUDE_DIR) $(EXAMPLE_DIR)
 	
-$(EXE): $(OBJS)
+exe: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
 
-$(LIBNAME): $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o $@.so
-	ar rc $@.a $(OBJS)
+lib: $(OBJS)
+	$(info Create the shared and static libs: )
+	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o $(LIBNAME).so
+	ar rc $(LIBNAME).a $(OBJS)
 
-$(INSTALL):
-	mv $(LIBNAME).a $(LIBNAME).so $(LIB_DIR)
-	mv $(*.hpp) $(INCLUDE_DIR)
-	mv $(EXE) $(EXAMPLE_DIR)
+install:
+	cp -p $(LIBNAME).a $(LIBNAME).so $(LIB_DIR)
+	cp -p $(SRC_DIR)/*.hpp $(INCLUDE_DIR)
+#mv $(EXE) $(EXAMPLE_DIR)
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) *.so *.a
 
 .PHONY: clean
