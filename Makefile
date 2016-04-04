@@ -47,7 +47,7 @@ SOURCES=$(SRC_DIR)/ptp_time.cpp $(SRC_DIR)/papi_count.cpp
 OBJS = $(SOURCES:.cpp=.o)
 ##########################################
 
-TARGET=lib build_dir install
+TARGET=lib build_dir install info
 
 all: $(TARGET)
 #$(BUILD_DIR) $(LIBNAME) $(INSTALL) $(clean)
@@ -74,10 +74,17 @@ lib: $(OBJS)
 	ar rc $(LIBNAME).a $(OBJS)
 
 install:
+	$(info Installation of the lib: )
 	cp -p $(LIBNAME).a $(LIBNAME).so $(LIB_DIR)
 	cp -p $(SRC_DIR)/*.hpp $(INCLUDE_DIR)
-#mv $(EXE) $(EXAMPLE_DIR)
+	cp -p $(SRC_DIR)/tests/*.cpp $(EXAMPLE_DIR)
 
+info:
+	$(info)
+	$(info To test the library, go to the installation dir:)
+	$(info $(LIB_DIR) )
+	$(info and run "make")
+	
 clean:
 	rm -f $(OBJS) *.so *.a
 

@@ -4,10 +4,10 @@
 COMPILER = GCC
 
 # Installation directory, path where to install iptp 
-INST_DIR=$(HOME)/ptplib
+INST_DIR=$(HOME)/ptptime-lib
 LIB_DIR = $(INST_DIR)/lib
 INCLUDE_DIR = $(INST_DIR)/include
-EXAMPLE_DIR = $(INST_DIR)/example
+EXAMPLE_DIR = $(INST_DIR)/examples
 
 # Buid with PAPI instrumentation (TODO)
 PAPI_INSTR = false
@@ -21,4 +21,4 @@ DEBUG = true
 
 # Version and name of the library
 VER:=.0.1
-LIBNAME=ptplib$(VER)
+LIBNAME=libptp$(VER)

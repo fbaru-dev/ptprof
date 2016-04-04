@@ -3,9 +3,9 @@
 #include <math.h>
 #include <iostream>
 
-#include "CPUTick.hpp"
-#include "PTime.hpp"
-#include "PapiCount.hpp"
+#include "cpu_tick.hpp"
+#include "ptp_time.hpp"
+#include "papi_count.hpp"
 
 #include <unistd.h>
 using namespace std;
