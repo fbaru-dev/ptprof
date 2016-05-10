@@ -1,5 +1,6 @@
 SRC_DIR = ./src
 DOC_DIR = ./doc
+LIB_DIR = ./lib
 
 include ./common.mk
 
@@ -47,10 +48,7 @@ SOURCES=$(SRC_DIR)/ptp_time.cpp $(SRC_DIR)/papi_count.cpp
 OBJS = $(SOURCES:.cpp=.o)
 ##########################################
 
-TARGET=lib build_dir install info
-
-all: $(TARGET)
-#$(BUILD_DIR) $(LIBNAME) $(INSTALL) $(clean)
+all: lib
 
 %.o: %.cpp
 	$(info Compiling the object file: )
@@ -58,12 +56,9 @@ all: $(TARGET)
 	
 doc: 
 	doxygen
-
-distrib:
-	git archive --format=tar --prefix=ptplib-$(VER)/ $(VER) | gzip > ../ptplib-$(VER).tar.gz
-
-build_dir:
-	mkdir -p $(INST_DIR) $(LIB_DIR) $(INCLUDE_DIR) $(EXAMPLE_DIR)
+#This should work is I use tas in the git repo
+#distrib:
+#	git archive --format=tar.gz --prefix=ptplib$(VER)/ v$(VER) >ptplib$(VER).tar.gz
 	
 exe: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
@@ -72,20 +67,27 @@ lib: $(OBJS)
 	$(info Create the shared and static libs: )
 	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o $(LIBNAME).so
 	ar rc $(LIBNAME).a $(OBJS)
+	mv $(LIBNAME).a $(LIBNAME).so $(LIB_DIR) 
 
-install:
+install: build_dir copy info
+
+build_dir:
+	mkdir -p $(INST_DIR) $(INST_LIB_DIR) $(INST_INCLUDE_DIR) $(INST_EXAMPLE_DIR) $(INST_DOC_DIR)
+
+copy:
 	$(info Installation of the lib: )
-	cp -p $(LIBNAME).a $(LIBNAME).so $(LIB_DIR)
-	cp -p $(SRC_DIR)/*.hpp $(INCLUDE_DIR)
-	cp -p $(SRC_DIR)/tests/*.cpp $(EXAMPLE_DIR)
+	cp -p $(LIB_DIR)/$(LIBNAME).a $(LIB_DIR)/$(LIBNAME).so $(INST_LIB_DIR)
+	cp -p $(SRC_DIR)/*.hpp $(INST_INCLUDE_DIR)
+	cp -p $(SRC_DIR)/tests/*.cpp $(INST_EXAMPLE_DIR)
+	cp -p $(DOC_DIR)/* $(INST_DOC_DIR)
 
 info:
 	$(info)
 	$(info To test the library, go to the installation dir:)
-	$(info $(LIB_DIR) )
+	$(info $(INST_LIB_DIR) )
 	$(info and run "make")
 	
 clean:
-	rm -f $(OBJS) *.so *.a
+	rm -f $(OBJS) $(LIB_DIR)/$(LIBNAME)*
 
 .PHONY: clean
