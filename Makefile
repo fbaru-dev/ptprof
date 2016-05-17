@@ -42,7 +42,7 @@ endif
 
 
 #list of the files to be compiled
-SOURCES=$(SRC_DIR)/ptp_time.cpp $(SRC_DIR)/papi_count.cpp
+SOURCES=$(SRC_DIR)/ptprof.cpp $(SRC_DIR)/papi_count.cpp
 
 ##########################################
 OBJS = $(SOURCES:.cpp=.o)

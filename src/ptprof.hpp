@@ -1,5 +1,5 @@
-#ifndef _PTIME_HPP
-#define _PTIME_HPP
+#ifndef _PTPROF_HPP
+#define _PTPROF_HPP
 
 #include <iostream>
 #include <iomanip>
@@ -17,7 +17,7 @@
 
 using namespace std;
 
-//! PTime class. 
+//! Ptp class. 
 /*! This class includes all the profiling informations which can be
  * monitored and measured for the application you are going
  * to investigate.
@@ -25,7 +25,7 @@ using namespace std;
 
 //This class could be a Singleton
 
-class PTime {
+class Ptprof {
 private:
  	map<string,double>  		   _timeexc;	/**< std::map containing as key the name of the region
 							      and value the exclusive time.*/
@@ -76,7 +76,7 @@ public:
 //! Default constructor
 /*! Initializes the PTime class with the default constructor
 */ 
-	PTime();
+	Ptprof();
 //! Constructor which takes a string argument
 /*! This constructor takes a string as input. The string tells
  * you which category of PAPI measurements are taken
@@ -89,11 +89,11 @@ public:
  * - \b memory   : memory counters
  * - \b no-counters : not using any counter
  */	
-	PTime(string group_name);
+	Ptprof(string group_name);
 //! Default destructor
 /*! Default destructor of the class
  */
-	~PTime();
+	~Ptprof();
 //! Initialization function
 /*! This public function takes a \b std:string name for the context to profile.
  *  All the output data are refered to this initial point

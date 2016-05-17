@@ -1,20 +1,20 @@
-#include "ptp_time.hpp"
+#include "ptprof.hpp"
 
-double PTime :: timelast = 0;
-int PTime :: _initialize = 0;
+double Ptprof :: timelast = 0;
+int Ptprof :: _initialize = 0;
 
-PTime :: PTime()
+Ptprof :: Ptprof()
 {
-  cout << "Initialization of the PTime profiling tool without PAPI counters." << endl;
+  cout << "Initialization of the Ptprof lib without PAPI counters." << endl;
   _withpapi = 0;
   _countergroup = "no-counters";
     print_header();
   _time = new CPUWTime();
 }
 
-PTime :: PTime(string group_name)
+Ptprof :: Ptprof(string group_name)
 {
-  cout << "Initialization of the PTime profiling tool." << endl;
+  cout << "Initialization of the Ptprof lib." << endl;
   _countergroup = group_name;
   _withpapi = 1; 
     print_header();
@@ -22,11 +22,11 @@ PTime :: PTime(string group_name)
 }
 
 
-void PTime :: print_header()
+void Ptprof :: print_header()
 {
   output << endl;
   output << "---------------------------------------------------------------" << endl;
-  output << "------------------------- PTime Output ------------------------" << endl;
+  output << "------------------------- Ptprof Output ------------------------" << endl;
   output << "---------------------------------------------------------------" << endl;  
   output << left << setw(26) << "Regions" 
          << left << setw(14) << "ncalls"
@@ -40,7 +40,7 @@ void PTime :: print_header()
 // 	}
   output << endl;
 }
-void PTime :: initialize(string context)
+void Ptprof :: initialize(string context)
 {
   if(!_initialize) {
     _initialize = 1;
@@ -63,7 +63,7 @@ void PTime :: initialize(string context)
     }
 }
 
-void PTime :: finalize()
+void Ptprof :: finalize()
 {
   if(_initialize) {
     _initialize = 0;
@@ -86,7 +86,7 @@ void PTime :: finalize()
   }
 }
 
-void PTime :: print_context_data()
+void Ptprof :: print_context_data()
 {
   unsigned int i, j, k;
   vector<string> funcnameOutput(_funcsname);
@@ -169,7 +169,7 @@ void PTime :: print_context_data()
   output << endl;
 }
 
-void PTime :: clean_context_data()
+void Ptprof :: clean_context_data()
 {
   _timeexc.clear();
   _timeinc.clear();
@@ -179,7 +179,7 @@ void PTime :: clean_context_data()
   while(!_stackfun.empty()) _stackfun.pop();
 }
 
-void PTime :: start(string name)
+void Ptprof :: start(string name)
 {
      unsigned int i;
      double timeon;
@@ -231,7 +231,7 @@ void PTime :: start(string name)
      }
 }
 
-void PTime :: stop()
+void Ptprof :: stop()
 { 
     if(_initialize) 
      {
@@ -296,12 +296,12 @@ void PTime :: stop()
 	}
 }
 
-void PTime :: print()
+void Ptprof :: print()
 {
 	cout << output.str();
 }
 
-string PTime :: tree_name(string name) 
+string Ptprof :: tree_name(string name) 
 {
     int ndash = count_dash(name);
     string name_out;
@@ -313,7 +313,7 @@ string PTime :: tree_name(string name)
     return name_out;
 }
 
-PTime :: ~PTime()
+Ptprof :: ~Ptprof()
 {
   delete _time;
   cout << "Delete CPUWTime " << endl;
