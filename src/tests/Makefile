@@ -25,7 +25,7 @@ else
 	CFLAGS+= -O2
 endif	
 
-# Check if the library needs to be installed with PAPI
+# Check if the examples run with papi
 ifeq ($(PAPI_INSTR),true)
 	INCLUDES += $(PAPI_HOME)/include
 	LIBS += $(PAPI_HOME)/lib
@@ -46,13 +46,10 @@ OBJS = $(SOURCES:.cpp=.o)
 ##########################################
 
 #list of the lib to be linked against
-LIBS = -l$(LIBNAME)
+LIBS = -L$(INST_LIB_DIR) -l$(LIBNAME)
 
 #include files
-INCLUDES = -I$(INCLUDE_DIR)
-
-#libraries
-LIBS = -L$(LIB_DIR)
+INCLUDES = -I$(INST_INCLUDE_DIR)		
 
 %.o: %.cpp
 	$(info Compiling the test file: )
@@ -61,3 +58,10 @@ LIBS = -L$(LIB_DIR)
 
 ex1.x: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
+
+clean:
+	rm -f $(OBJS) *.x
+
+run:
+	./ex1.x 100
+

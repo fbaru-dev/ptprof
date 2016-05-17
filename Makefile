@@ -1,6 +1,7 @@
 SRC_DIR = ./src
 DOC_DIR = ./doc
 LIB_DIR = ./lib
+TEST_DIR = ./src/tests
 
 include ./common.mk
 
@@ -51,6 +52,7 @@ OBJS = $(SOURCES:.cpp=.o)
 all: lib
 
 %.o: %.cpp
+	$(info )
 	$(info Compiling the object file: )
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
 	
@@ -64,30 +66,41 @@ exe: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
 
 lib: $(OBJS)
+	$(info )
 	$(info Create the shared and static libs: )
-	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o $(LIBNAME).so
-	ar rc $(LIBNAME).a $(OBJS)
-	mv $(LIBNAME).a $(LIBNAME).so $(LIB_DIR) 
+	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -Wl,-soname,lib$(LIBNAME).so -o lib$(LIBNAME).so
+	ar rc lib$(LIBNAME).a $(OBJS)
+	mv lib$(LIBNAME).a lib$(LIBNAME).so $(LIB_DIR) 
+	
 
 install: build_dir copy info
 
 build_dir:
-	mkdir -p $(INST_DIR) $(INST_LIB_DIR) $(INST_INCLUDE_DIR) $(INST_EXAMPLE_DIR) $(INST_DOC_DIR)
+	$(info ) 
+	$(info Create the installation directories: )
+	mkdir -p $(INST_DIR) 
+	mkdir -p $(INST_LIB_DIR) 
+	mkdir -p $(INST_INCLUDE_DIR) 
+	mkdir -p $(INST_EXAMPLE_DIR) 
+	mkdir -p $(INST_DOC_DIR)
 
 copy:
+	$(info ) 
 	$(info Installation of the lib: )
-	cp -p $(LIB_DIR)/$(LIBNAME).a $(LIB_DIR)/$(LIBNAME).so $(INST_LIB_DIR)
+	cp -p $(LIB_DIR)/lib$(LIBNAME).a $(LIB_DIR)/lib$(LIBNAME).so $(INST_LIB_DIR)
 	cp -p $(SRC_DIR)/*.hpp $(INST_INCLUDE_DIR)
 	cp -p $(SRC_DIR)/tests/*.cpp $(INST_EXAMPLE_DIR)
 	cp -p $(DOC_DIR)/* $(INST_DOC_DIR)
+	cp -p $(TEST_DIR)/* $(INST_EXAMPLE_DIR)
 
 info:
-	$(info)
+
+	$(info )
 	$(info To test the library, go to the installation dir:)
-	$(info $(INST_LIB_DIR) )
+	$(info $(INST_EXAMPLE_DIR) )
 	$(info and run "make")
 	
 clean:
-	rm -f $(OBJS) $(LIB_DIR)/$(LIBNAME)*
+	rm -f $(OBJS) $(LIB_DIR)/lib$(LIBNAME)*
 
 .PHONY: clean

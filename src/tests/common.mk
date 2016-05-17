@@ -3,6 +3,9 @@
 # supported: GCC, ICC (TODO)
 COMPILER = GCC
 
+# Build ptplib example with debug flags
+DEBUG = true
+
 # Installation directory, path where to install iptp 
 INST_DIR=$(HOME)/ptprof-lib
 INST_LIB_DIR = $(INST_DIR)/lib
@@ -14,12 +17,7 @@ INST_DOC_DIR = $(INST_DIR)/doc
 PAPI_INSTR = false
 PAPI_HOME =
 
-# Build C interface for the library (TODO)
-C_INTERFACE = false
-
-# Build ptprof lib with debug flags
-DEBUG = true
-
 # Version and name of the library
 VER:=.0.1
 LIBNAME=ptprof$(VER)
+

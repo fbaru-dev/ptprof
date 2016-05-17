@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "cpu_tick.hpp"
-#include "ptp_time.hpp"
+#include "ptprof.hpp"
 #include "papi_count.hpp"
 
 #include <unistd.h>
@@ -27,9 +27,9 @@ int main(int argc, char** argv)
    double giga=1e9;
 
    //PapiCount papi("flops-dp");
-   PTime *ttime;
+   Ptprof *ttime;
    
-   ttime = new PTime("no-counters");
+   ttime = new Ptprof("no-counters");
    
    ttime->initialize("context");
        sleep(1);
