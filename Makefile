@@ -41,6 +41,8 @@ ifeq ($(C_INTERFACE),true)
 	
 endif
 
+#include files
+INCLUDES = -I$(SRC_DIR)/includes
 
 #list of the files to be compiled
 SOURCES=$(SRC_DIR)/ptprof.cpp $(SRC_DIR)/papi_count.cpp
@@ -88,7 +90,7 @@ copy:
 	$(info ) 
 	$(info Installation of the lib: )
 	cp -p $(LIB_DIR)/lib$(LIBNAME).a $(LIB_DIR)/lib$(LIBNAME).so $(INST_LIB_DIR)
-	cp -p $(SRC_DIR)/*.hpp $(INST_INCLUDE_DIR)
+	cp -p $(SRC_DIR)/includes/*.hpp $(INST_INCLUDE_DIR)
 	cp -p $(SRC_DIR)/tests/*.cpp $(INST_EXAMPLE_DIR)
 	cp -p $(DOC_DIR)/* $(INST_DOC_DIR)
 	cp -p $(TEST_DIR)/* $(INST_EXAMPLE_DIR)
