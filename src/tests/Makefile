@@ -63,5 +63,5 @@ clean:
 	rm -f $(OBJS) *.x
 
 run:
-	./ex1.x 100
+	./ex1.x
 

@@ -37,16 +37,19 @@
 
 using namespace std;
 
-//! Ptp class. 
+//! Ptprof class. 
 /*! This class includes all the profiling informations which can be
  * monitored and measured for the application you are going
  * to investigate.
 */
 
-//This class could be a Singleton
+//This class is a Singleton
 
 class Ptprof {
 private:
+	static bool instanceFlag;	//Implementation of Singleto pattern
+	static Ptprof *single;
+    
  	map<string,double>  		   _timeexc;	/**< std::map containing as key the name of the region
 							      and value the exclusive time.*/
  	map<string,double>  		   _timeinc;    /**< std::map containing as key the name of the region
@@ -89,13 +92,13 @@ private:
 	void clean_context_data();
 	
 	string tree_name(string name); 			
-	inline int count_dash(string name) 			
-	{return count(name.begin(), name.end(), '-');}
+	inline int count_dash(string name) {return count(name.begin(), name.end(), '-');}
 	
-public:
+private:
 //! Default constructor
 /*! Initializes the PTime class with the default constructor
-*/ 
+ *  The constructor is made private because of the Singleton access
+ */ 
 	Ptprof();
 //! Constructor which takes a string argument
 /*! This constructor takes a string as input. The string tells
@@ -110,6 +113,10 @@ public:
  * - \b no-counters : not using any counter
  */	
 	Ptprof(string group_name);
+public:
+//! Get a single instance of the class
+  static Ptprof* getInstance(string group_name = "no-counters");
+   
 //! Default destructor
 /*! Default destructor of the class
  */
@@ -128,7 +135,7 @@ The function does not take any input paramentes. It closes the context and analy
 	void finalize();
 //! The public function which starts the profiling region
 /*!
-\param name string argument of the region we want to profile.
+ *  \param name string argument of the region we want to profile.
 */	
 	void start(string name);
 //! The public function which stops the profiling region

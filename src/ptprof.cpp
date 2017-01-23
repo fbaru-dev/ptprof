@@ -23,6 +23,23 @@
 double Ptprof :: timelast = 0;
 int Ptprof :: _initialize = 0;
 
+bool Ptprof::instanceFlag = false;
+Ptprof* Ptprof::single = NULL;
+Ptprof* Ptprof::getInstance(string group_name)
+{
+  if(!instanceFlag)
+  {
+    single = new Ptprof(group_name);
+    instanceFlag = true;
+    return single;
+  }
+  else
+  {
+    return single;
+  }
+}
+
+
 Ptprof :: Ptprof()
 {
   cout << "Initialization of the Ptprof lib without PAPI counters." << endl;
@@ -34,10 +51,14 @@ Ptprof :: Ptprof()
 
 Ptprof :: Ptprof(string group_name)
 {
-  cout << "Initialization of the Ptprof lib." << endl;
   _countergroup = group_name;
-  _withpapi = 1; 
-    print_header();
+  if(group_name.compare("no-counters") == 0) {
+    _withpapi = 0;
+  } else {
+    _withpapi = 1; 
+  }
+   cout << "Initialization of the Ptprof lib with: " << _countergroup << endl;
+   print_header();
   _time = new CPUWTime();
 }
 
@@ -45,9 +66,9 @@ Ptprof :: Ptprof(string group_name)
 void Ptprof :: print_header()
 {
   output << endl;
-  output << "---------------------------------------------------------------" << endl;
+  output << "----------------------------------------------------------------" << endl;
   output << "------------------------- Ptprof Output ------------------------" << endl;
-  output << "---------------------------------------------------------------" << endl;  
+  output << "----------------------------------------------------------------" << endl;  
   output << left << setw(26) << "Regions" 
          << left << setw(14) << "ncalls"
          << left << setw(18) << "inc-wt(s) - (%)"
@@ -239,11 +260,11 @@ void Ptprof :: start(string name)
 	timelast = timeon;
 	lastname = name;
 	
-	_papicount -> papi_read();
-	for(int j=0; j < _papicount->getNumEvents(); ++j)
-	{
-	  _papivalues[_funcsname[i]].push_back(_papicount->getValues(j));
-	}
+// 	_papicount -> papi_read();
+// 	for(int j=0; j < _papicount->getNumEvents(); ++j)
+// 	{
+// 	  _papivalues[_funcsname[i]].push_back(_papicount->getValues(j));
+// 	}
 	
      } else {
        cout << "ERR: Cannot start a timing region: context not initialized" << endl;
@@ -303,17 +324,17 @@ void Ptprof :: stop()
 	
 	//_cputime[name].stop();
 	//_cputick[name].stop();
-	_papicount -> papi_read();
-	
-	for(int i=0; i < _papicount->getNumEvents(); ++i)
-	{
-	  long long truevalue = 0L;
-	  long long value = _papicount->getValues(i);
-	  cout << "HERE = " << " " << _funcsname[0] << " " << value << " " <<  _papivalues[_funcsname[0]][i] << endl;
-	  truevalue = _papivalues[_funcsname[0]][i] - value;
-	  _papivalues[_funcsname[0]][i] = truevalue;
-	  cout << "HERE = " << " " << _funcsname[0] << " " << truevalue << endl;
-	}
+// 	_papicount -> papi_read();
+// 	
+// 	for(int i=0; i < _papicount->getNumEvents(); ++i)
+// 	{
+// 	  long long truevalue = 0L;
+// 	  long long value = _papicount->getValues(i);
+// 	  cout << "HERE = " << " " << _funcsname[0] << " " << value << " " <<  _papivalues[_funcsname[0]][i] << endl;
+// 	  truevalue = _papivalues[_funcsname[0]][i] - value;
+// 	  _papivalues[_funcsname[0]][i] = truevalue;
+// 	  cout << "HERE = " << " " << _funcsname[0] << " " << truevalue << endl;
+// 	}
 }
 
 void Ptprof :: print()
@@ -336,6 +357,7 @@ string Ptprof :: tree_name(string name)
 Ptprof :: ~Ptprof()
 {
   delete _time;
+  instanceFlag = false;
   cout << "Delete CPUWTime " << endl;
   if(_withpapi) {
     delete _papicount;
