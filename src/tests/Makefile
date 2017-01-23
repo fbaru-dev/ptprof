@@ -2,18 +2,17 @@ include ./common.mk
 
 # Define the compiler
 ifeq ($(COMPILER),GCC)
+	CC=gcc
+	CFLAGS+=-Wall -Werror -g -ansi -pedantic -std=c99
 	CXX=g++
-	CXXFLAGS+=-std=c++11 -fPIC
-	CC=gcc 
-	CFLAGS+=
-	LDFLAGS= -fPIC -shared
+	CXXFLAGS+=-std=c++11
 endif
 
 ifeq ($(COMPILER),ICC)
-	CXX=icc
-	CXXFLAGS+=-std=c++11 -fPIC
-	CC=icpc
-	CFLAGS+=
+	CC=icc
+	CFLAGS+=-Wall -Werror -g -ansi -pedantic -std=c99
+	CXX=icpc
+	CXXFLAGS+=-std=c++11
 endif
 
 # Check for the debug mode
@@ -31,18 +30,15 @@ ifeq ($(PAPI_INSTR),true)
 	LIBS += $(PAPI_HOME)/lib
 endif
 
-# Check if the library needs the C wrappers
-ifeq ($(C_INTERFACE),true)
-	
-endif
-
 #list of the target program names
-EXE=ex1.x
+all: ex1.x ex2.x 
 
 #list of the examples to be compiled
-SOURCES=example_1.cpp
+SOURCECPP=example_1.cpp
+SOURCEC=example_2.c
 ##########################################
-OBJS = $(SOURCES:.cpp=.o)
+OBJSCPP = $(SOURCECPP:.cpp=.o)
+OBJSC   = $(SOURCEC:.c=.o)
 ##########################################
 
 #list of the lib to be linked against
@@ -52,16 +48,19 @@ LIBS = -L$(INST_LIB_DIR) -l$(LIBNAME)
 INCLUDES = -I$(INST_INCLUDE_DIR)		
 
 %.o: %.cpp
-	$(info Compiling the test file: )
+	$(info Compiling the example_1 file: )
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
 
+%.o: %.c
+	$(info Compiling the example_2 file: )
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
 
-ex1.x: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
+ex1.x: $(OBJSCPP)
+	$(CXX) $(CXXFLAGS) $(OBJSCPP) $(LIBS) -o ex1.x
+	
+ex2.x: $(OBJSC)
+	$(CC) $(CFLAGS) $(OBJSC) $(LIBS) -o ex2.x
 
 clean:
-	rm -f $(OBJS) *.x
-
-run:
-	./ex1.x
+	rm -f *.o *.x
 

@@ -14,7 +14,7 @@ int main(int argc, char** argv)
   double a,k;
   
   Ptprof *ttime;
-    ttime = Ptprof::getInstance();
+  ttime = Ptprof::getInstance();
   
   ttime->initialize("context");
   sleep(1);
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     ttime->stop();
     ttime->stop(); 
   }
-       
+  std::cout << "k = " << k << std::endl;     
   ttime->stop();
     
   sleep(1);
@@ -82,7 +82,9 @@ int main(int argc, char** argv)
   
   ttime->print();
 
-    return 0;
+  delete ttime;
+    
+  return 0;
 }
 
 double kern1()

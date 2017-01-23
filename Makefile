@@ -7,18 +7,20 @@ include ./common.mk
 
 # Define the compiler
 ifeq ($(COMPILER),GCC)
+	CC=gcc
+	CFLAGS+=
 	CXX=g++
 	CXXFLAGS+=-std=c++11 -fPIC
 	CC=gcc 
-	CFLAGS+=
 	LDFLAGS= -fPIC -shared
 endif
 
 ifeq ($(COMPILER),ICC)
-	CXX=icc
+	CC=icc
+	CFLAGS+=
+	CXX=icpc
 	CXXFLAGS+=-std=c++11 -fPIC
 	CC=icpc
-	CFLAGS+=
 endif
 
 # Check for the debug mode
@@ -36,16 +38,12 @@ ifeq ($(PAPI_INSTR),true)
 	LIBS += $(PAPI_HOME)/lib
 endif
 
-# Check if the library needs the C wrappers
-ifeq ($(C_INTERFACE),true)
-	
-endif
 
 #include files
 INCLUDES = -I$(SRC_DIR)/includes
 
 #list of the files to be compiled
-SOURCES=$(SRC_DIR)/ptprof.cpp $(SRC_DIR)/papi_count.cpp
+SOURCES=$(SRC_DIR)/ptprof.cpp $(SRC_DIR)/papi_count.cpp $(SRC_DIR)/wrapper/ptprof_cwrapper.cpp
 
 ##########################################
 OBJS = $(SOURCES:.cpp=.o)
@@ -91,6 +89,7 @@ copy:
 	$(info Installation of the lib: )
 	cp -p $(LIB_DIR)/lib$(LIBNAME).a $(LIB_DIR)/lib$(LIBNAME).so $(INST_LIB_DIR)
 	cp -p $(SRC_DIR)/includes/*.hpp $(INST_INCLUDE_DIR)
+	cp -p $(SRC_DIR)/wrapper/*.h $(INST_INCLUDE_DIR)
 	cp -p $(SRC_DIR)/tests/*.cpp $(INST_EXAMPLE_DIR)
 	cp -p $(DOC_DIR)/* $(INST_DOC_DIR)
 	cp -p $(TEST_DIR)/* $(INST_EXAMPLE_DIR)

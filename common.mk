@@ -17,9 +17,6 @@ INST_DOC_DIR = $(INST_DIR)/doc
 PAPI_INSTR = false
 PAPI_HOME =
 
-# Build C interface for the library (TODO)
-C_INTERFACE = false
-
 # Build ptprof lib with debug flags
 DEBUG = true
 
