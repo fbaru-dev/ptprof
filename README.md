@@ -30,11 +30,11 @@ Then for the C++ example:
 
 for the C example:
 
-     $> ./ex2.x
+    $> ./ex2.x
      
 In case you have problem due to the shared library, please export the environment variable `LD_LIBRARY_PATH`:
 
-     $> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/installation/directory
+    $> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/installation/directory
 
 ## Examples
 
