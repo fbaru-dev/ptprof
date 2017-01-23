@@ -4,7 +4,7 @@
 COMPILER = GCC
 
 # Installation directory, path where to install ptprof library
-WHERE = /home/hpc/pr28fa/di68xiw2/code/ptprof/install
+WHERE = $(HOME)
 
 #-------------------------------------------------------------
 INST_DIR=$(WHERE)/ptprof-lib
