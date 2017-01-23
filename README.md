@@ -28,6 +28,6 @@ Go to the installation directory and compile the examples.
 
 ## License
 
-See file LICENSE.txt for details.
+See file LICENSE for details.
 
 
