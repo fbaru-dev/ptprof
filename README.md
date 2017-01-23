@@ -23,6 +23,18 @@ It is enough to run `make install` to copy all the necessary files to the instal
 Go to the installation directory and compile the examples.
 
     $> make
+  
+Then for the C++ example:
+
+    $> ./ex1.x
+
+for the C example:
+
+     $> ./ex2.x
+     
+In case you have problem due to the shared library, please export the environment variable `LD_LIBRARY_PATH`:
+
+     $> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/your/installation/directory
 
 ## Examples
 
