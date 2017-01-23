@@ -158,7 +158,7 @@ void Ptprof :: print_context_data()
 	}	
 //         unsigned int n = i/2;
 	for(k=j+1; k<i; ++k) { funcnameOutput[k].insert(0,"-"); } //Add some indent to identify the call stack in the
-	   							      // output print
+	   							  //output print
   }
   
   double timeexc_context=0.0;
