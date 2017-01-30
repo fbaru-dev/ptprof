@@ -20,6 +20,6 @@ PAPI_HOME =
 DEBUG = false
 
 # Version and name of the library
-VER:=.0.1
+VER:=.1.0
 LIBNAME=ptprof$(VER)
 
