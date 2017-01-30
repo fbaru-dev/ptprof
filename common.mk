@@ -1,10 +1,10 @@
 # Configuration options setup
 
-# supported: GCC, ICC (TODO)
-COMPILER = GCC
+# supported: GCC, ICC
+COMPILER = ICC
 
 # Installation directory, path where to install ptprof library
-WHERE = $(HOME)
+WHERE = $(HOME)/code/ptprof
 
 #-------------------------------------------------------------
 INST_DIR=$(WHERE)/ptprof-lib
@@ -18,7 +18,7 @@ PAPI_INSTR = false
 PAPI_HOME =
 
 # Build ptprof lib with debug flags
-DEBUG = true
+DEBUG = false
 
 # Version and name of the library
 VER:=.0.1

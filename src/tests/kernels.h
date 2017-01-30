@@ -20,11 +20,12 @@ double kern2()
   double x[SIZE];
   double y[SIZE];
   double res = 0.;
+  int i;
   
   Cptprof *t;
   t = getInstance();
   
-  for(int i=0; i<SIZE; ++i) 
+  for(i=0; i<SIZE; ++i) 
   {
     x[i] = sqrt((double) i * M_PI);
     y[i] = cos((double) i);

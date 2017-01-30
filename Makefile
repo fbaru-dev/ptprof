@@ -10,17 +10,18 @@ ifeq ($(COMPILER),GCC)
 	CC=gcc
 	CFLAGS+=
 	CXX=g++
-	CXXFLAGS+=-std=c++11 -fPIC
-	CC=gcc 
-	LDFLAGS= -fPIC -shared
+	CXXFLAGS = -std=c++11 -fPIC 
+	LDFLAGS  = -shared
+	OPENMP   = -openmp 
 endif
 
 ifeq ($(COMPILER),ICC)
 	CC=icc
-	CFLAGS+=
+	CFLAGS=
 	CXX=icpc
-	CXXFLAGS+=-std=c++11 -fPIC
-	CC=icpc
+	CXXFLAGS = -std=c++11 -fPIC 
+	LDFLAGS  = -shared
+	OPENMP   = -qopenmp 
 endif
 
 # Check for the debug mode
@@ -28,8 +29,8 @@ ifeq ($(DEBUG),true)
 	CXXFLAGS+= -g -Wall -pedantic
 	CFLAGS+= -g -Wall -pedantic
 else
-	CXXFLAGS+= -O2
-	CFLAGS+= -O2
+	CXXFLAGS+= -O3
+	CFLAGS+= -O3
 endif	
 
 # Check if the library needs to be installed with PAPI
@@ -54,7 +55,7 @@ all: lib
 %.o: %.cpp
 	$(info )
 	$(info Compiling the object file: )
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) $(OPENMP) $(INCLUDES) -c $< -o $@ 
 	
 doc: 
 	doxygen
@@ -63,7 +64,7 @@ doc:
 #	git archive --format=tar.gz --prefix=ptplib$(VER)/ v$(VER) >ptplib$(VER).tar.gz
 	
 exe: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) $(LIBS) -o $(EXE)
+	$(CXX) $(CXXFLAGS) $(OPENMP) $(OBJS) $(LIBS) -o $(EXE)
 
 lib: $(OBJS)
 	$(info )
@@ -90,7 +91,6 @@ copy:
 	cp -p $(LIB_DIR)/lib$(LIBNAME).a $(LIB_DIR)/lib$(LIBNAME).so $(INST_LIB_DIR)
 	cp -p $(SRC_DIR)/includes/*.hpp $(INST_INCLUDE_DIR)
 	cp -p $(SRC_DIR)/wrapper/*.h $(INST_INCLUDE_DIR)
-	cp -p $(SRC_DIR)/tests/*.cpp $(INST_EXAMPLE_DIR)
 	cp -p $(DOC_DIR)/* $(INST_DOC_DIR)
 	cp -p $(TEST_DIR)/* $(INST_EXAMPLE_DIR)
 

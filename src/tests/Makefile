@@ -3,16 +3,20 @@ include ./common.mk
 # Define the compiler
 ifeq ($(COMPILER),GCC)
 	CC=gcc
-	CFLAGS+=-Wall -Werror -g -ansi -pedantic -std=c99
+	CFLAGS+=
 	CXX=g++
-	CXXFLAGS+=-std=c++11
+	CXXFLAGS = -std=c++11 -fPIC 
+	LDFLAGS  = -shared
+	OPENMP   = -openmp 
 endif
 
 ifeq ($(COMPILER),ICC)
 	CC=icc
-	CFLAGS+=-Wall -Werror -g -ansi -pedantic -std=c99
+	CFLAGS=
 	CXX=icpc
-	CXXFLAGS+=-std=c++11
+	CXXFLAGS = -std=c++11 -fPIC 
+	LDFLAGS  = -shared
+	OPENMP   = -qopenmp 
 endif
 
 # Check for the debug mode
@@ -22,12 +26,6 @@ ifeq ($(DEBUG),true)
 else
 	CXXFLAGS+= -O2
 	CFLAGS+= -O2
-endif	
-
-# Check if the examples run with papi
-ifeq ($(PAPI_INSTR),true)
-	INCLUDES += $(PAPI_HOME)/include
-	LIBS += $(PAPI_HOME)/lib
 endif
 
 #list of the target program names
@@ -49,17 +47,17 @@ INCLUDES = -I$(INST_INCLUDE_DIR)
 
 %.o: %.cpp
 	$(info Compiling the example_1 file: )
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) $(OPENMP) $(INCLUDES) -c $< -o $@ 
 
 %.o: %.c
 	$(info Compiling the example_2 file: )
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ 
+	$(CC) $(CFLAGS) $(OPENMP) $(INCLUDES) -c $< -o $@ 
 
 ex1.x: $(OBJSCPP)
-	$(CXX) $(CXXFLAGS) $(OBJSCPP) $(LIBS) -o ex1.x
+	$(CXX) $(CXXFLAGS) $(OPENMP) $(OBJSCPP) $(LIBS) -o ex1.x
 	
 ex2.x: $(OBJSC)
-	$(CC) $(CFLAGS) $(OBJSC) $(LIBS) -o ex2.x
+	$(CC) $(CFLAGS) $(OPENMP) $(OBJSC) $(LIBS) -o ex2.x
 
 clean:
 	rm -f *.o *.x

@@ -20,13 +20,25 @@
 
 #include "ptprof.hpp"
 
+#ifdef	_OPENMP
+int Ptprof::thread_master = 0;
+#endif
+
 double Ptprof :: timelast = 0;
 int Ptprof :: _initialize = 0;
 
 bool Ptprof::instanceFlag = false;
 Ptprof* Ptprof::single = NULL;
+// mutex Ptprof::sMutex;
+
 Ptprof* Ptprof::getInstance(string group_name)
 {
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return NULL;
+#endif
+//   static Cleanup cleanup;
+//   lock_guard<mutex> guard(sMutex);
+//   
   if(!instanceFlag)
   {
     single = new Ptprof(group_name);
@@ -39,10 +51,19 @@ Ptprof* Ptprof::getInstance(string group_name)
   }
 }
 
+// Ptprof::Cleanup::~Cleanup()
+// {
+// //   lock_guard<mutex> guard(Ptprof::sMutex);
+// #ifdef _OPENMP
+//   if (thread_master != omp_get_thread_num() ) return;
+// #endif
+//   delete Ptprof::single;
+//   Ptprof::single = NULL;
+// }
 
 Ptprof :: Ptprof()
 {
-  cout << "Initialization of the Ptprof lib without PAPI counters." << endl;
+  cout << "Ptprof:: Initialization of the Ptprof lib without PAPI counters." << endl;
   _withpapi = 0;
   _countergroup = "no-counters";
     print_header();
@@ -57,7 +78,7 @@ Ptprof :: Ptprof(string group_name)
   } else {
     _withpapi = 1; 
   }
-   cout << "Initialization of the Ptprof lib with: " << _countergroup << endl;
+   cout << "Ptprof:: Initialization of the Ptprof lib with: " << _countergroup << endl;
    print_header();
   _time = new CPUWTime();
 }
@@ -68,7 +89,7 @@ void Ptprof :: print_header()
   output << endl;
   output << "----------------------------------------------------------------" << endl;
   output << "------------------------- Ptprof Output ------------------------" << endl;
-  output << "----------------------------------------------------------------" << endl;  
+  output << "----------------------------------------------------------------" << endl;
   output << left << setw(26) << "Regions" 
          << left << setw(14) << "ncalls"
          << left << setw(18) << "inc-wt(s) - (%)"
@@ -83,33 +104,43 @@ void Ptprof :: print_header()
 }
 void Ptprof :: initialize(string context)
 {
-  if(!_initialize) {
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return;
+#endif
+//     lock_guard<mutex> guard(sMutex);
+  if(!_initialize) 
+  {
     _initialize = 1;
     _context_name = context;
     lastname = "root";
     
-    cout << "Open a context with name: " << _context_name << endl;
+    cout << "Ptprof:: Open a context with name: " << _context_name << endl;
     
     _context_time = _time->getWcTime();
     
     if(_withpapi)
     {
-      cout << "Starting with PAPI counter group: " << _countergroup << endl;
+      cout << "Ptprof:: Starting with PAPI counter group: " << _countergroup << endl;
       _papicount = new PapiCount(_countergroup);
       _papicount -> papi_start();			//Start the PAPI counters
     }
     } else {
-      cout << "ERR: Only one context at time allowed" << endl;
+      cout << "Ptprof:: ERR: Only one context at time allowed" << endl;
       abort();
-    }
+  }
 }
 
 void Ptprof :: finalize()
 {
-  if(_initialize) {
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return;
+#endif
+//     lock_guard<mutex> guard(sMutex);
+  if(_initialize) 
+  {
     _initialize = 0;
     _context_time = _time->getWcTime() - _context_time;
-    cout << "Close the context with name: " << _context_name << endl;
+    cout << "Ptprof:: Close the context with name: " << _context_name << endl;
      
     print_context_data();
     clean_context_data();
@@ -117,12 +148,12 @@ void Ptprof :: finalize()
     if(_withpapi)
     {
       /*TODO Papi stopping context */
-      cout << "Stop with PAPI counter group: " << _countergroup << endl;
+      cout << "Ptprof:: Stop with PAPI counter group: " << _countergroup << endl;
 //       _papicount = new PapiCount(_countergroup);
 //       _papicount -> papi_start();			//Start the PAPI counters
     }
   } else {
-    cout << "ERR: Cannot finalize since there is no context opened" << endl; 
+    cout << "Ptprof:: ERR: Cannot finalize since there is no context opened" << endl; 
     abort();
   }
 }
@@ -225,7 +256,10 @@ void Ptprof :: start(string name)
      unsigned int i;
      double timeon;
      string startname = name+"I";			//Name of the initial region (internally with the label 'I')
-	
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return;
+#endif
+//     lock_guard<mutex> guard(sMutex);
      if(_initialize) 
      {
 	for (i=0; i < _funcsname.size(); ++i)		//Check if I need to create a new item in the function name vector
@@ -267,13 +301,17 @@ void Ptprof :: start(string name)
 // 	}
 	
      } else {
-       cout << "ERR: Cannot start a timing region: context not initialized" << endl;
+       cout << "Ptprof:: ERR: Cannot start a timing region: context not initialized" << endl;
        abort();
      }
 }
 
 void Ptprof :: stop()
 { 
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return;
+#endif
+//     lock_guard<mutex> guard(sMutex);
     if(_initialize) 
      {
         double timeoff;
@@ -313,12 +351,12 @@ void Ptprof :: stop()
 	  }
 	  
 	} else {
-	  cout << "ERR: Number of start and stop not equal!" << endl;
+	  cout << "Ptprof:: ERR: Number of start and stop not equal!" << endl;
 	  abort();
 	}
 	
       } else {
-	cout << "ERR: cannot stop a timing region: context not initialized" << endl;
+	cout << "Ptprof:: ERR: cannot stop a timing region: context not initialized" << endl;
 	abort();
       }
 	
@@ -339,6 +377,10 @@ void Ptprof :: stop()
 
 void Ptprof :: print()
 {
+#ifdef _OPENMP
+  if (thread_master != omp_get_thread_num() ) return;
+#endif
+//   lock_guard<mutex> guard(sMutex);
 	cout << output.str();
 }
 
@@ -358,9 +400,10 @@ Ptprof :: ~Ptprof()
 {
   delete _time;
   instanceFlag = false;
-  cout << "Delete CPUWTime " << endl;
+  cout << "Ptprof:: Delete Ptprof " << endl;
   if(_withpapi) {
     delete _papicount;
-    cout << "Delete PAPI " << endl;
+    cout << "Ptprof:: Delete PAPI " << endl;
   }
+  Ptprof::single = NULL;
 }

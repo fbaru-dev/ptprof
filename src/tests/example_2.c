@@ -10,7 +10,7 @@ double kern1();
 int main() 
 {
   double a,b,c,k;
-  
+  int i;
   Cptprof *t = NULL;
   t = getInstance();
    
@@ -18,12 +18,12 @@ int main()
   sleep(1);	
    
   start(t,"kern1");    
-  for(int i=0; i<1000; ++i) {
+  for(i=0; i<1000; ++i) {
      a = kern1();
   }
   stop(t);
   printf("a = %e\n", a);
-  for(int i=0; i<1; ++i) {
+  for(i=0; i<1; ++i) {
    start(t,"first");  
     sleep(1);
    
@@ -32,7 +32,7 @@ int main()
     b = kern1();
     printf("b = %e\n", b);
    
-   for(int i=0; i<1; ++i) {
+   for(i=0; i<1; ++i) {
     start(t,"insert1");  
      sleep(1);
     start(t,"insert2");  
@@ -91,7 +91,8 @@ double kern1()
   double x[SIZE];
   double y[SIZE];
   double res = 0.;
-  for(int i=0; i<SIZE; ++i) 
+  int i;
+  for(i=0; i<SIZE; ++i) 
   {
     x[i] = sin((double) i * M_PI);
     y[i] = cos((double) i);

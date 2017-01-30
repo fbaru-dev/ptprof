@@ -35,6 +35,11 @@
 #include "cpu_tick.hpp"
 #include "papi_count.hpp"
 
+#ifdef	_OPENMP
+#include <omp.h>
+#endif
+// #include <mutex>
+// Definition of a multithreaded safe singleton class
 using namespace std;
 
 //! Ptprof class. 
@@ -46,9 +51,21 @@ using namespace std;
 //This class is a Singleton
 
 class Ptprof {
-private:
-	static bool instanceFlag;	//Implementation of Singleto pattern
+protected:
+#ifdef	_OPENMP  
+        static int thread_master;
+#endif
+	//Implementation of Singleton pattern
+	static bool instanceFlag;	            
+	// Static variable for the one-and-only instance
 	static Ptprof *single;
+	// Embedded class to make sure the single instance gets deleted on program shutdown
+// 	friend class Cleanup;
+// 	class Cleanup
+// 	{
+// 	  public:
+// 	    ~Cleanup();
+// 	};
     
  	map<string,double>  		   _timeexc;	/**< std::map containing as key the name of the region
 							      and value the exclusive time.*/
@@ -113,14 +130,21 @@ private:
  * - \b no-counters : not using any counter
  */	
 	Ptprof(string group_name);
+
+	
+//    virtual ~Ptprof();
+   
+//    static mutex sMutex;
+   
 public:
 //! Get a single instance of the class
   static Ptprof* getInstance(string group_name = "no-counters");
-   
+
 //! Default destructor
 /*! Default destructor of the class
  */
-	~Ptprof();
+        ~Ptprof();
+
 //! Initialization function
 /*! This public function takes a \b std:string name for the context to profile.
  *  All the output data are refered to this initial point
